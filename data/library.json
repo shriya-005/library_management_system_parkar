@@ -2,8 +2,8 @@
     "books": [
         {
             "book_id": "B001",
-            "title": "Python Basics",
-            "author": "F. John Smith",
+            "title": "The Catcher in the Rye",
+            "author": "J.D. Salinger",
             "borrowed_by": null
         },
         {

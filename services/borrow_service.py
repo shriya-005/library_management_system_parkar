@@ -31,6 +31,9 @@ def borrow_book(books, members, member_id,book_id ):
             "data": None
         }
 
+    book["borrowed_by"] = member_id
+    member["borrowed_books"].append(book_id)
+
     return {
         "success": True,
         "message": "Book borrowed successfully.",
