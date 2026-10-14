@@ -10,7 +10,7 @@ def add_book(books, book_id, title, author):
             "data": None
         }
 
-    for book in book:
+    for book in books:
         if book['book_id'] == book_id:
             return {
                 "success": False,
@@ -25,7 +25,7 @@ def add_book(books, book_id, title, author):
         "borrowed_by": None
     }
 
-    book.append(new_book)
+    books.append(new_book)
     return {
         "success": True,
         "message": "Book added successfully.",
