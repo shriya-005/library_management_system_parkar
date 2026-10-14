@@ -87,6 +87,11 @@
             "member_id": "M004",
             "name": "Sofia Garcia",
             "borrowed_books": []
+        },
+        {
+            "member_id": "M005",
+            "name": "Sanika Ghogare",
+            "borrowed_books": []
         }
     ]
 }

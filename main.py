@@ -64,7 +64,22 @@ def main():
                 save_data(books, members)
 
         elif choice == "2":
-            display_books(books)
+            books_list = display_books(books)
+            if not books_list:
+                print("No books available.")
+            else:
+                print("\nAvailable Books:")
+                for book in books_list:
+                    status = (
+                        "Available"
+                        if book["borrowed_by"] is None
+                        else "On Loan"
+                    )
+                    print(
+                        f'{book["book_id"]} | '
+                        f'{book["title"]} | '
+                        f'{book["author"]} | {status}'
+                    )
 
         elif choice == "3":
             query = input("Enter title or author to search: ").strip()
@@ -97,7 +112,12 @@ def main():
                 save_data(books, members)
 
         elif choice == "5":
-            display_members(members)
+            result = display_members(members)
+            show_result(result)
+            if result["success"] and result["data"]:
+                for member in result["data"]:
+                    borrowed = ", ".join(member["borrowed_books"]) if member["borrowed_books"] else "None"
+                    print(f"ID: {member['member_id']} | Name: {member['name']} | Borrowed Books: {borrowed}")
 
         elif choice == "6":
             member_id = input("Enter Member ID: ").strip()

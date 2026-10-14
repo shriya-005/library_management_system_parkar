@@ -1,4 +1,4 @@
-def add_book(book, book_id, title, author):
+def add_book(books, book_id, title, author):
     book_id=book_id.strip()
     title=title.strip()
     author=author.strip()
@@ -47,7 +47,7 @@ def display_books(book):
 
     return result
     
-def search_book(books, query):
+def search_books(books, query):
     query=query.strip().casefold()
 
     if not query:
@@ -62,7 +62,7 @@ def search_book(books, query):
         title=book['title'].casefold()
         author=book['author'].casefold()
 
-        if not query in title and not query in author:
+        if query in title or query in author:
             book_info=book.copy()
 
             if book_info['borrowed_by'] is None:
@@ -104,7 +104,7 @@ def remove_book(books, book_id):
             return {
                 "success": True,
                 "message": "Book removed successfully.",
-                "data": remove_book
+                "data": removed_book
             }
     return {
         "success": False,
