@@ -1,0 +1,17 @@
+{
+    "books": [
+        {
+            "book_id": " B001",
+            "title": "Python Basics",
+            "author": "F. John Smith",
+            "borrowed_by": null
+        }
+    ],
+    "members": [
+        {
+            "member_id": "M001",
+            "name": "Rahul",
+            "borrowed_books": []
+        }
+    ]
+}
