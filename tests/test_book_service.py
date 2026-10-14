@@ -1,97 +1,138 @@
 import unittest
 
-from services.book_service import borrow_book, return_book
+from services.book_service import (
+    add_book, 
+    display_books,
+    search_book,
+    remove_book,
+)
 
-def setUp(self):
+class TestBookService(unittest.TestCase):
+    def setUp(self):
+        self.books = [
+            {
+                "book_id": "B001",
+                "title": "Python Basics",
+                "author": "John Smith",
+                "borrowed_by": None
+            },
+            {
+                "book_id": "B002",
+                "title": "Good girl's guide to murder",
+                "author": "Holly Jackson",
+                "borrowed_by": None
+            },
+            {
+                "book_id": "B003",
+                "title": "Pride and Prejudice",
+                "author": "Jane Austen",
+                "borrowed_by": None
+            },
+            {
+                "book_id":"B004",
+                "title": "To Kill a Mockingbird",
+                "author": "Harper Lee",
+                "borrowed_by": None
+            },
+            {
+                "book_id": "B005",
+                "title": "The Catcher in the Rye",
+                "author": "J.D. Salinger",
+                "borrowed_by": None
+            },
+        ]
 
-    self.books = [
-        {
-            "book_id": "B001",
-            "title": "Python",
-            "author": "John Smith",
-            "borrowed_by": None
-        },
-        {
-            "book_id": "B002",
-            "title": "Python",
-            "author": "John Smith",
-            "borrowed_by": None
-        },
-        {
-            "book_id": "B003",
-            "title": "Java Basics",
-            "author": "Jane Doe",
-            "borrowed_by": "M001"
-        },
-        {
-            "book_id": "B004",
-            "title": "C++ Basics",
-            "author": "Alex Lee",
-            "borrowed_by": None
-        }
-    ]
+def test_add_book(self):
+    result=(
+        self.books, "B006","Harry Potter","J.K. Rowling"
+    )
 
-    self.members = [
-        {
-            "member_id": "M001",
-            "name": "Rahul",
-            "borrowed_books": ["B003"]
-        },
-        {
-            "member_id": "M002",
-            "name": "Aisha Patel",
-            "borrowed_books": []
-        },
-        {
-            "member_id": "M003",
-            "name": "Sanika",
-            "borrowed_books": []
-        }
-    ]
-
-def test_borrow_available_book(self):
-    result = borrow_book(self.books, self.members, "M002", "B001")
     self.assertTrue(result["success"])
-    self.assertEqual(self.books[0]["borrowed_by"], "M002")
-    self.assertIn("B001", self.members[1]["borrowed_books"])
+    self.assertEqual(len(self.books), 6)
 
-def test_borrow_already_borrowed_book(self):
-    result = borrow_book(self.books, self.members, "M002", "B003")
+def test_add_duplicate_book_id(self):
+    result = add_book(
+        self.books, "B001", "Another Book", "Author Name"
+    )
     self.assertFalse(result["success"])
-    self.assertEqual(self.books[2]["borrowed_by"], "M001")
-    self.assertNotIn("B003", self.members[1]["borrowed_books"])
+    self.assertEqual(len(self.books), 5)
 
-def test_borrow_nonexistent_book(self):
-    result = borrow_book(self.books, self.members, "M002", "B999")
+def test_add_book_with_empty_title(self):
+    result = add_book(
+        self.books, "B006", "", "J.K. Rowling"
+    )
     self.assertFalse(result["success"])
-    self.assertIsNone(self.books[1]["borrowed_by"])
+    self.assertEqual(len(self.books), 5)
 
-def test_return_borrowed_book(self):
-    result = return_book(self.books, self.members, "M001", "B003")
+def test_display_books(self):
+    result = display_books(self.books)
+    self.assertEqual(len(result["data"]), 5)
+
+def test_display_empty_collection(self):
+    result = display_books([])
     self.assertTrue(result["success"])
-    self.assertIsNone(self.books[2]["borrowed_by"])
-    self.assertNotIn("B003", self.members[0]["borrowed_books"])
+    self.assertEqual(len(result["data"]), [])
 
-def test_return_book_not_borrowed_by_another_member(self):
-    result = return_book(self.books, self.members, "M002", "B003")
-    self.assertFalse(result["success"])
-    self.assertEqual(self.books[2]["borrowed_by"], "M001")
-    self.assertIn("B003", self.members[0]["borrowed_books"])
+def test_search_by_title(self):
+    result = search_book(self.books, "Pride and Prejudice")
+    self.assertEqual(len(result["data"]), 1)
+    self.assertEqual(
+        result["data"][0]["book_id"], "B003"
+    )
 
-def test_return_nonexistent_book(self):
-    result = return_book(self.books, self.members, "M002", "B999")
-    self.assertFalse(result["success"])
+def test_search_by_author(self):
+    result = search_book(self.books, "Holly Jackson")
+    self.assertEqual(len(result["data"]), 1)
+    self.assertEqual(
+        result["data"][0]["book_id"], "B002"
+    )
 
-def test_return_nonexistent_member(self):
-    result = return_book(self.books, self.members, "M999", "B001")
-    self.assertFalse(result["success"])
-    self.assertIsNone(self.books[0]["borrowed_by"],"M001")
+def test_search_ignore_case(self):
+    result = search_book(self.books, "python basics")
+    self.assertEqual(len(result["data"]), 1)
+    self.assertEqual(
+        result["data"][0]["book_id"], "B001"
+    )
 
-def test_borrow_another_copy_of_same_title(self):
-    result = borrow_book(self.books, self.members, "M002", "B002")
+def test_search_by_partial_title(self):
+    result = search_book(self.books, "mockingbird")
+    self.assertEqual(len(result["data"]), 1)
+    self.assertEqual(
+        result["data"][0]["book_id"], "B004"
+    )
+
+def test_search_by_partial_author(self):
+    result = search_book(self.books, "austen")
+    self.assertEqual(len(result["data"]), 1)
+    self.assertEqual(
+        result["data"][0]["book_id"], "B003"
+    )
+
+def test_search_no_results(self):
+    result = search_book(self.books, "xyz123")
+
     self.assertTrue(result["success"])
-    self.assertEqual(self.books[1]["borrowed_by"], "M002")
-    self.assertIsNone(self.members[1]["borrowed_books"].count("B002"))
+    self.assertEqual(result["data"], [])
 
-if __name__ == '__main__':
-    unittest.main()
+def test_search_empty_query(self):
+    result = search_book(self.books, "")
+    self.assertFalse(result["success"])
+
+def test_remove_book(self):
+    result = remove_book(self.books, "B001")
+    self.assertTrue(result["success"])
+    self.assertEqual(len(self.books), 4)
+
+def test_cannot_remove_book_on_loan(self):
+    self.books[0]["borrowed_by"] = "M001"
+    result = remove_book(self.books, "B001")
+    self.assertFalse(result["success"])
+    self.assertEqual(len(self.books), 5)
+
+def test_remove_nonexistent_book(self):
+    result = remove_book(self.books, "B999")
+    self.assertFalse(result["success"])
+    self.assertEqual(len(self.books), 5)
+
+if __name__ == "__main__":
+    unittest.main(verbosity=2)

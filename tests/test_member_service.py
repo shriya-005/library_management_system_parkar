@@ -6,19 +6,19 @@ from services.member_service import(
 members = []
 
 #register a new member
-result = register_member(members, "M001", "Sanika")
+result = register_member(members, "M001", "Rahul")
 print("Test 1:", result(["message"]))
 
 #register another member
-result = register_member(members, "M002", "Mrudula")
+result = register_member(members, "M002", "Aisha Patel")
 print("Test 2:", result(["message"]))
 
 #reject duplicate ID
-result = register_member(members, "M001", "Shriya")
+result = register_member(members, "M001", "Sanika")
 print("Test 3:", result(["message"]))
 
 #reject empty name
-result = register_member(members, "M003", "")
+result = register_member(members, "M099", "")
 print("Test 4:", result(["message"]))
 
 #display all members
@@ -30,5 +30,5 @@ result = get_members(members, "M001")
 print("Test 6:", result["message"])
 
 #find non existent member
-result = get_members(members, "M004")
+result = get_members(members, "M090")
 print("Test 7:", result["message"])

@@ -61,9 +61,9 @@
             "borrowed_by": null
         },
         {
-            "book_id": "B011",
-            "title": "The Martian",
-            "author": "Andy Weir",
+            "book_id": "B020",
+            "title": "Ikigai",
+            "author": "Hector Garcia",
             "borrowed_by": null
         }
     ],
@@ -86,6 +86,16 @@
         {
             "member_id": "M004",
             "name": "Sofia Garcia",
+            "borrowed_books": []
+        },
+        {
+            "member_id": "M005",
+            "name": "Sanika Ghogare",
+            "borrowed_books": []
+        },
+        {
+            "member_id": "M010",
+            "name": "Shriya Bhan",
             "borrowed_books": []
         }
     ]
