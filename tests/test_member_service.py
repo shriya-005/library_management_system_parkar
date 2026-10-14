@@ -7,19 +7,19 @@ members = []
 
 #register a new member
 result = register_member(members, "M001", "Rahul")
-print("Test 1:", result(["message"]))
+print("Test 1:", result)
 
 #register another member
 result = register_member(members, "M002", "Aisha Patel")
-print("Test 2:", result(["message"]))
+print("Test 2:", result)
 
 #reject duplicate ID
 result = register_member(members, "M001", "Sanika")
-print("Test 3:", result(["message"]))
+print("Test 3:", result)
 
 #reject empty name
 result = register_member(members, "M099", "")
-print("Test 4:", result(["message"]))
+print("Test 4:", result)
 
 #display all members
 result = display_members(members)

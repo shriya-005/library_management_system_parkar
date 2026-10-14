@@ -33,7 +33,7 @@ def add_book(books, book_id, title, author):
     }
 
 
-def display_books(book):
+def display_book(book):
     result = []
     for book in book:
         book_info = book.copy()
