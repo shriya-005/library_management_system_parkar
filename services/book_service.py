@@ -32,7 +32,6 @@ def add_book(books, book_id, title, author):
         "data": new_book
     }
 
-
 def display_book(book):
     result = []
     for book in book:

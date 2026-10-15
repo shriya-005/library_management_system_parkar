@@ -55,12 +55,6 @@
             "borrowed_by": null
         },
         {
-            "book_id": "B010",
-            "title": "The Alchemist",
-            "author": "Paulo Coelho",
-            "borrowed_by": null
-        },
-        {
             "book_id": "B020",
             "title": "Ikigai",
             "author": "Hector Garcia",
@@ -70,6 +64,18 @@
             "book_id": "B060",
             "title": "Never Lie",
             "author": "Frieda",
+            "borrowed_by": "M005"
+        },
+        {
+            "book_id": "B040",
+            "title": "Housemaid",
+            "author": "Freida",
+            "borrowed_by": "M010"
+        },
+        {
+            "book_id": "B035",
+            "title": "Harry Potter",
+            "author": "J. K. Rowling",
             "borrowed_by": null
         }
     ],
@@ -97,11 +103,25 @@
         {
             "member_id": "M005",
             "name": "Sanika Ghogare",
-            "borrowed_books": []
+            "borrowed_books": [
+                "B060"
+            ]
         },
         {
             "member_id": "M010",
             "name": "Shriya Bhan",
+            "borrowed_books": [
+                "B040"
+            ]
+        },
+        {
+            "member_id": "M020",
+            "name": "Mrudula Sonawane",
+            "borrowed_books": []
+        },
+        {
+            "member_id": "M015",
+            "name": "Pallavi Talekar",
             "borrowed_books": []
         }
     ]

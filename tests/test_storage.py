@@ -10,7 +10,7 @@ def test_load_library_data():
     members = data["members"]
 
     assert len(books) == 11
-    assert len(members) == 4
+    assert len(members) == 5
     assert all(
         set(book) == {"book_id", "title", "author", "borrowed_by"}
         for book in books

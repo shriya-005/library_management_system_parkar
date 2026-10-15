@@ -1,6 +1,10 @@
 import json 
 from pathlib import Path
 import streamlit as st
+from services.borrow_service import (
+    borrow_book as borrow_book_service,
+    return_book as return_book_service,
+)
 
 DATA_DIR= Path("data")
 DATA_FILE= DATA_DIR / "library.json"
@@ -84,7 +88,7 @@ if page == "Dashboard":
     else:
         st.info("No books have been added yet. Please add books to the library.")
 
-elif page == "Books":
+elif page == "Add Book":
     st.header("Books Management")
 
     with st.expander("Add New Book"):
@@ -106,7 +110,7 @@ elif page == "Books":
                         "author": author,
                         "borrowed_by": None,
                     })
-                    save_data()
+                    save_data({"books": books, "members": members})
                     st.success("Book added successfully!")
                     st.rerun()
 
@@ -146,14 +150,14 @@ elif page == "Books":
 
             if st.button("Remove Selected Book"):
                 books.remove(selected_book)
-                save_data()
+                save_data({"books": books, "members": members})
                 st.success("Book removed successfully!")
                 st.rerun()
 
         else:
             st.info("No available books to remove.")
 
-elif page == "Members":
+elif page == "Add Member":
     st.header("Members Management")
 
     with st.form("register_member_form"):
@@ -172,7 +176,7 @@ elif page == "Members":
                     "name": name,
                     "borrowed_books": [],
                 })
-                save_data()
+                save_data({"books": books, "members": members})
                 st.success("Member registered successfully!")
                 st.rerun()
 
@@ -193,92 +197,100 @@ elif page == "Members":
     else:
         st.info("No members have been registered yet. Please register members.")
 
-elif page == "Borrow and Return":
-    st.header("Borrowing & Returning Management")
+elif page == "Borrow Book":
+    st.header("Borrowing Management")
 
-    borrow_tab, return_tab = st.tabs(["Borrow Book", "Return Book"])
+    if not members:
+        st.warning("Register member first before borrowing books.")
 
-    with borrow_tab:
-        if not members:
-            st.warning("Register member first before borrowing books.")
+    elif not available_books:
+        st.warning("No available books to borrow. Please add books to the library.")
 
-        elif not available_books:
-            st.warning("No available books to borrow. Please add books to the library.")
+    else:
+        member = st.selectbox(
+            "Select Member",
+            members,
+            format_func=lambda m: f"{m['member_id']} - {m['name']}",
+            key="borrow_member",
+        )
 
-        else:
-            member=st.selectbox(
-                "Select Member",
-                members,
-                format_func=lambda m:( f"{m['member_id']} - {m['name']}"
-                ),
-                key="borrow_member",
-            )
+        member_loans = member.setdefault("borrowed_books", [])
+        st.write(
+            f"Borrowed Books: {len(member_loans)} "
+            f"out of {MAX_BOOKS_PER_MEMBER}"
+        )
 
-            member_loans= member.setdefault("borrowed_books", [])
-            st.write(
-                f"Borrowed Books: {len(member_loans)} "
-                f"out of {MAX_BOOKS_PER_MEMBER} "
-            )
-
-            book=st.selectbox(
+        with st.form("borrow_book_form"):
+            book = st.selectbox(
                 "Select Book to Borrow",
                 available_books,
-                format_func=lambda b:( f"{b['book_id']} - {b['title']}" ),
+                format_func=lambda b: f"{b['book_id']} - {b['title']}",
                 key="borrow_book",
             )
-            if st.button("Borrow Book"):
-                if len(member_loans) >= MAX_BOOKS_PER_MEMBER:
-                    st.error(
-                        f"Member has already borrowed the maximum of 3 books."
-                    )
-                else:
-                    book["borrowed_by"] = member["member_id"]
-
-                    if "borrowed_books" not in member_loans:
-                        member_loans.append(book["book_id"])
-
-                    save_data()
-                    st.success(f"Book '{book['title']}' borrowed successfully!")
-                    st.rerun()
-
-    with return_tab:
-        member_with_loans = [m for m in members if m.get("borrowed_books")]
-
-        if not member_with_loans:
-            st.info("No members have borrowed books yet.")
-        else:
-            member=st.selectbox(
-                "Select Member",
-                member_with_loans,
-                format_func=lambda m:( f"{m['member_id']} - {m['name']}" ),
-                key="return_member",
+            submitted = st.form_submit_button(
+                "Borrow Book",
+                key="borrow_book_submit",
+                type="primary",
             )
 
-            loaned_ids= member.get("borrowed_books", [])
+        if submitted:
+            result = borrow_book_service(
+                books, members, member["member_id"], book["book_id"]
+            )
+            if result["success"]:
+                save_data({"books": books, "members": members})
+                st.success(result["message"])
+                st.rerun()
+            else:
+                st.error(result["message"])
 
-            member_loans= [  
-                b for b in books 
-                if b["book_id"] in loaned_ids
-                and b.get("borrowed_by") == member["member_id"]
-            ]
+elif page == "Return Book":
+    st.header("Returning Management")
 
-            if member_books:
-                book=st.selectbox(
+    member_with_loans = [m for m in members if m.get("borrowed_books")]
+
+    if not member_with_loans:
+        st.info("No members have borrowed books yet.")
+    else:
+        member = st.selectbox(
+            "Select Member",
+            member_with_loans,
+            format_func=lambda m: f"{m['member_id']} - {m['name']}",
+            key="return_member",
+        )
+
+        loaned_ids = member.get("borrowed_books", [])
+        member_books = [
+            b for b in books
+            if b["book_id"] in loaned_ids
+            and b.get("borrowed_by") == member["member_id"]
+        ]
+
+        if member_books:
+            with st.form("return_book_form"):
+                book = st.selectbox(
                     "Select Book to Return",
                     member_books,
-                    format_func=lambda b:( f"{b['book_id']} - {b['title']}" ),
+                    format_func=lambda b: f"{b['book_id']} - {b['title']}",
                     key="return_book",
                 )
+                submitted = st.form_submit_button(
+                    "Return Book",
+                    key="return_book_submit",
+                    type="primary",
+                )
 
-                if st.button("Return Book"):
-                    book["borrowed_by"] = None
-                    member_loans.remove(book["book_id"])
-                    save_data()
-                    st.success(f"Book '{book['title']}' returned successfully!")
+            if submitted:
+                result = return_book_service(
+                    books, members, member["member_id"], book["book_id"]
+                )
+                if result["success"]:
+                    save_data({"books": books, "members": members})
+                    st.success(result["message"])
                     st.rerun()
-
                 else:
-                    st.info("no matching books found for this member.")
+                    st.error(result["message"])
+        else:
+            st.info("No matching books found for this member.")
 
 st.sidebar.divider()
-st.sidebar.caption("Library Management System ")
