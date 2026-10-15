@@ -1,6 +1,6 @@
 from services.book_service import (
     add_book,
-    display_books,
+    display_book,
     search_books,
     remove_book
 )
@@ -64,7 +64,7 @@ def main():
                 save_data(books, members)
 
         elif choice == "2":
-            books_list = display_books(books)
+            books_list = display_book(books)
             if not books_list:
                 print("No books available.")
             else:

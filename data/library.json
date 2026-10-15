@@ -65,6 +65,12 @@
             "title": "Ikigai",
             "author": "Hector Garcia",
             "borrowed_by": null
+        },
+        {
+            "book_id": "B060",
+            "title": "Never Lie",
+            "author": "Frieda",
+            "borrowed_by": null
         }
     ],
     "members": [

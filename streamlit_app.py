@@ -29,7 +29,7 @@ def load_data():
 def save_data(data):
     DATA_DIR.mkdir(parents=True, exist_ok=True)
 
-   temp_file = DATA_FILE.with_suffix(".tmp")
+    temp_file = DATA_FILE.with_suffix(".tmp")
 
     with open(temp_file, "w", encoding="utf-8") as file:
         json.dump(data, file, indent=4)
@@ -256,8 +256,7 @@ elif page == "Borrow and Return":
 
             loaned_ids= member.get("borrowed_books", [])
 
-            member_loans= 
-            [  
+            member_loans= [  
                 b for b in books 
                 if b["book_id"] in loaned_ids
                 and b.get("borrowed_by") == member["member_id"]
